@@ -9,9 +9,13 @@ import {
     Button, Dialog, DialogActions, DialogContent
 } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import EditIcon from '@material-ui/icons/Edit';
+import {useDispatch , connect} from 'react-redux'
+import { logIn } from "../redux/Action";
+import { useHistory, Redirect } from 'react-router'
 
-export default function Login() {
+ function Login(props) {
+    const dispatch = useDispatch()
+    let history = useHistory()
     const useStyles = makeStyles({
         cardLayout: {
             maxWidth: '300px',
@@ -54,10 +58,12 @@ export default function Login() {
     })
     
     useEffect(()=>{
+        
        
     },[])
     
     const onSubmit = (e)=>{
+      
         let hardcodedCred = {
             email: 'email@email.com',
             password:'Password@123'
@@ -67,12 +73,14 @@ export default function Login() {
         (formik.values.password === hardcodedCred.password)){
             const token = '123456abcdef';
             sessionStorage.setItem('auth-token', token);    
-           alert('submit')
+            dispatch(logIn(formik.values.username))
+            history.push('/data')
+            // return <Redirect to='/home' />
             
         } 
         else{
             alert("invalid user")
-            // return(false)
+            return(false)
             
         }
     
@@ -85,7 +93,8 @@ export default function Login() {
     })
     const classes = useStyles()
     
-    return (
+    return (<>
+  
         <Grid container>
         <Card elevation={4} className={classes.cardLayout}>
         <Grid align='center'>
@@ -147,5 +156,16 @@ export default function Login() {
                 
             </Card>
             </Grid>
+            </>
     )
 }
+const mapStateToProps = state =>{
+    
+    return {
+        isLogedIn:state.data.isLogedIn,
+        loading: state.data.loading,
+        
+    }
+}
+
+export default connect(mapStateToProps)(Login)

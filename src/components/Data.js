@@ -10,18 +10,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TablePagination from "@material-ui/core/TablePagination";
-import AppBar from '@material-ui/core/AppBar';
 import Container from '@material-ui/core/Container';
 import Toolbar from '@material-ui/core/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
-
-
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-
-
-
-
+import {useDispatch , connect} from 'react-redux'
+import { deleteUser, getUser } from "../redux/Action";
+import { Link } from 'react-router-dom';
+import { Button } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -74,36 +72,29 @@ const useStyles = makeStyles({
      
 })
 
-function Data() {
+function Data(props) {
+    const dispatch = useDispatch()
+    const token = sessionStorage.getItem("auth-token")
     
-    const [data,setData] =useState()
-    const [loading, setLoading] = useState(true)
     useEffect( () => {
         
-        axios.get('https://reqres.in/api/users?page=2')
-            .then(res => {
-                setData(res.data.data);
-                setLoading(false)
-                console.log(res.data)
-            })
-            .catch(err => {
-                console.log(err.message)
-            })
-        
-        // const result = await getData()
-        // console.log(result)
+        // axios.get('https://reqres.in/api/users?page=2')
+        //     .then(res => {
+        //         setData(res.data.data);
+        //         setLoading(false)
+        //         console.log(res.data)
+        //     })
+        //     .catch(err => {
+        //         console.log(err.message)
+        //     })
        
-        // console.log(result)
-        // setLoading(false)
-    //    getData().then(res=>{
-    //        setData(res.data)
-    //    })
+        dispatch(getUser())
     
     }, [])
     
    
     const handleDelete = id => {
-      
+        dispatch(deleteUser(id))
    
       };
     
@@ -112,12 +103,15 @@ function Data() {
 
     const classes = useStyles();
     
+    
     return (
         <Grid container >
+             {
+               token? <>
 
             <AppBar position="static" className={classes.header} >
                 <Typography variant="h6" color="inherit" textAlign='center'>
-                    Header
+                   {!props.username ? <div>Header</div> :<div> Welcome {props.username}</div>}
                 </Typography>
 
             </AppBar>
@@ -128,7 +122,7 @@ function Data() {
                 </Typography>
             </Grid>
             <Grid item className={classes.body} >
-                {!loading ?(<TableContainer component={Paper} sm>
+                {!props.loading ?(<TableContainer component={Paper} sm>
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
                             <TableRow >
@@ -138,11 +132,12 @@ function Data() {
                                 <TableCell className={classes.tableHeading} align="center">Last Name</TableCell>
                                 <TableCell className={classes.tableHeading} align="center">Email</TableCell>
                                 <TableCell className={classes.tableHeading} align="center">Actions</TableCell>
+                                <TableCell className={classes.tableHeading} align="center">View</TableCell>
 
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data
+                            {props.data
                                 .map((data) => (
                                     <TableRow key={data.id}>
                                         <TableCell align="center">
@@ -154,8 +149,12 @@ function Data() {
                                         <TableCell align="center">{data.last_name}</TableCell>
                                         <TableCell align="center">{data.email}</TableCell>
                                         <TableCell align="center">
-                                            {<EditIcon className={classes.editIcon}/>}
+                                            <Link to={`/edit/${data.id}`} className={classes.link} >{<EditIcon className={classes.editIcon}/>}</Link>
                                         {<DeleteIcon className={classes.delIcon} onClick={() => handleDelete(data.id)}/>}</TableCell>
+                                        <TableCell align="center">
+                                            <Link to={`/details/${data.id}`} className={classes.link} >
+                                                <Button variant="contained" color="primary">View</Button></Link>
+                                            </TableCell>
 
 
                                     </TableRow>
@@ -167,9 +166,21 @@ function Data() {
             </Grid>
             
 
-            </Container>
+            </Container></>:<Link to ='/'><h1> login in first</h1>
+            
+            </Link>}
         </Grid>
     )
 }
+const mapStateToProps = state =>{
+    console.log(state.data)
+    return {
+        username:state.data.username,
+         data : state.data.data,
+        loading: state.data.loading,
+        isLogedIn: state.data.isLogedIn,
+        
+    }
+}
 
-export default Data
+export default connect(mapStateToProps)(Data)
