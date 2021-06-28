@@ -1,19 +1,35 @@
-import React, { Component } from 'react'
-import { Link} from 'react-router-dom'
+import React, {useEffect} from 'react'
+import {useDispatch , connect} from 'react-redux'
+import { Link } from 'react-router-dom';
+import { logOut } from '../redux/Action';
 
 
-export default class LogOut extends Component {
-    constructor(props) {
-        super(props)
-        sessionStorage.removeItem('auth-token')
-    }
+function Logout(props) {
+
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(logOut())
     
-    render() {
+    },[])
+    
         return (
             <div>
+                {!props.loading ?<>
                 <h1>Logout</h1>
                 <Link to ='/'>Login Again</Link>
+                </>
+                :<h1>Loading...</h1>}
             </div>
         )
+    
+}
+
+const mapStateToProps = state =>{
+    
+    return {
+        loading: state.data.loading,
+        
     }
 }
+
+export default connect(mapStateToProps)(Logout)

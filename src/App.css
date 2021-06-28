@@ -31,12 +31,12 @@
 }
 form
 {
-  margin-top: 20px;
+  margin-top: 2px;
 }
 
 form , .Field{
   background-color: white;
-  padding: 15px 20px;
+  padding: 13px 20px;
 }
 .Btn{
   margin-top: 20px;

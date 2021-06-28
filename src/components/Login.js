@@ -3,22 +3,24 @@ import '../App.css'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {
-    Card, Grid, makeStyles,TextField, FormControl,
-    InputLabel, Select, MenuItem, Radio,
-    FormControlLabel, FormLabel, RadioGroup,
-    Button, Dialog, DialogActions, DialogContent
+    Card, Grid, makeStyles,TextField,
+    Button, Tooltip
 } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {useDispatch , connect} from 'react-redux'
 import { logIn } from "../redux/Action";
 import { useHistory, Redirect } from 'react-router'
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 
  function Login(props) {
     const dispatch = useDispatch()
     let history = useHistory()
+    const [showPassword, setShowPassword] = useState(false)
     const useStyles = makeStyles({
         cardLayout: {
-            maxWidth: '300px',
+            maxWidth: '320px',
             justifyContent: 'center',
             position: 'absolute',
             top:'50%',
@@ -37,7 +39,8 @@ import { useHistory, Redirect } from 'react-router'
             fontSize: '25px',
         },
         formLayout: {
-            marginTop: '10px',
+            width:'85%',
+            margin: '10px 0',
             padding: '10px 20px 20px 20px',
         },
         error: {
@@ -47,6 +50,10 @@ import { useHistory, Redirect } from 'react-router'
             marginLeft: '10px',
             marginTop: '0'
         },
+       icon:{
+            marginTop:'5%',
+            position:'absolute'
+        }
     })
     const initialValues = {
         username:'',
@@ -71,8 +78,7 @@ import { useHistory, Redirect } from 'react-router'
         console.log(formik.values.username)
         if((formik.values.username === hardcodedCred.email) && 
         (formik.values.password === hardcodedCred.password)){
-            const token = '123456abcdef';
-            sessionStorage.setItem('auth-token', token);    
+               
             dispatch(logIn(formik.values.username))
             history.push('/data')
             // return <Redirect to='/home' />
@@ -84,6 +90,10 @@ import { useHistory, Redirect } from 'react-router'
             
         }
     
+    }
+
+    const handlePassword=()=>{
+        setShowPassword(!showPassword)
     }
     const formik = useFormik({
         initialValues,
@@ -114,12 +124,14 @@ import { useHistory, Redirect } from 'react-router'
                                 label='Userame*'
                                 fullWidth='true'
                                 size='small'
+                                
                                
                                 error={formik.touched.username && formik.errors.username}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.username}
                             />
+                            <PersonOutlineIcon className={classes.icon}/>
                             {formik.touched.username && formik.errors.username ? (
                                 <div className={classes.error}>{formik.errors.username}</div>
                             ) : null}
@@ -127,7 +139,7 @@ import { useHistory, Redirect } from 'react-router'
 
                         <Grid item xs={12}>
                             <TextField
-                                type='password'
+                                type={showPassword? 'text':'password'}
                                 id='password'
                                 name='password'
                                 label='Password'
@@ -138,6 +150,10 @@ import { useHistory, Redirect } from 'react-router'
                                 onBlur={formik.handleBlur}
                                 value={formik.values.password}
                             />
+                            <Tooltip title={showPassword? 'Hide Password':'Show Password'}>
+                            {!showPassword ? <Visibility className={classes.icon} onClick ={handlePassword}/> : 
+                            <VisibilityOff className={classes.icon} onClick ={handlePassword} />}
+                            </Tooltip>
                             {formik.touched.password && formik.errors.password ? (
                                 <div className={classes.error}>{formik.errors.password}</div>
                             ) : null}

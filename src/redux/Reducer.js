@@ -1,4 +1,4 @@
-import {LOG_IN, LOG_OUT, DELETE_DATA, VIEW_DATA, EDIT_DATA, GET_DATA} from './ActionType'
+import {LOG_IN, LOG_OUT, DELETE_DATA,  EDIT_DATA,  VIEW_DATA_ERROR, VIEW_DATA_SUCCESS, GET_DATA_SUCCESS, GET_DATA_ERROR} from './ActionType'
 
 
 const initialState={
@@ -8,6 +8,7 @@ const initialState={
     username:'',
     loading:true,
     edit:'',
+    err:''
 }
 
 const dataReducer = (state= initialState , action)=>{
@@ -22,27 +23,47 @@ const dataReducer = (state= initialState , action)=>{
          
         }
 
-        // case LOG_OUT: 
-        // sessionStorage.clear()
-        // return{
-        //   ...state,
-        //   isLogedIn:false,
-        //   data:[],
-        //   viewData:[]  
-        // }
+        case LOG_OUT: 
+        return{
+          ...state,
+          isLogedIn:false,
+          data:[],
+          viewData:[],
+          edit:'',
+          loading:false
+        }
+        
 
-        case GET_DATA: return{
+        case GET_DATA_SUCCESS: return{
           ...state,
           data:action.payload,
+          loading:false,
+          edit:'',
+          err:'',
+          viewData:[]
+          
+            
+        }
+        case GET_DATA_ERROR: return{
+          ...state,
+          err:action.payload,
           loading:false,
           edit:''
           
             
         }
-        case VIEW_DATA:
+        case VIEW_DATA_SUCCESS:
           return{
             ...state,
             viewData:action.payload,
+            loading:false,
+            edit:'',
+            err:''
+          }
+        case VIEW_DATA_ERROR:
+          return{
+            ...state,
+            err:action.payload,
             loading:false,
             edit:''
           }

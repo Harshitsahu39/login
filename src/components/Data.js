@@ -25,10 +25,13 @@ import { Button } from '@material-ui/core';
 const useStyles = makeStyles({
     header: {
         width: '100%',
-        textAlign: 'center',
-        
-        
-
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between'
+    },
+    link:{
+        textDecoration:'none',
+        color:'white'
     },
     heading:{
         textAlign:'center',
@@ -51,13 +54,14 @@ const useStyles = makeStyles({
     table: {
         width: '100%',
         justifyItems: 'center',
+        minWidth:'30%'
 
 
     },
-    header: {
-        textAlign: 'center',
-        paddingBottom: '5px'
-    },
+    // header: {
+    //     textAlign: 'center',
+    //     paddingBottom: '5px'
+    // },
     tableHeading: {
         fontWeight: 'bold',
     },
@@ -113,6 +117,9 @@ function Data(props) {
                 <Typography variant="h6" color="inherit" textAlign='center'>
                    {!props.username ? <div>Header</div> :<div> Welcome {props.username}</div>}
                 </Typography>
+                <Button color="primary" >
+                   <Link to="/logout" className={classes.link}>LOGOUT</Link>
+                </Button>
 
             </AppBar>
             <Container className={classes.container} >

@@ -2,20 +2,30 @@ import React, { useState, useEffect } from "react";
 import '../App.css'
 
 import {  useParams } from "react-router-dom";
-import {useDispatch , connect} from 'react-redux'
 import { editUser, viewUser } from "../redux/Action";
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import {useDispatch , connect} from 'react-redux'
 import { Link } from 'react-router-dom';
 import { findAllByTestId } from "@testing-library/react";
 import { useHistory, Redirect } from 'react-router'
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles({
     header: {
         width: '100%',
-        textAlign: 'center',
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between'
     },
+    link:{
+        textDecoration:'none',
+        color:'white'
+    },
+    inputField:{
+        margin:'2% 0'
+    }
 })
 
  function Edit(props) {
@@ -25,12 +35,10 @@ const useStyles = makeStyles({
     const dispatch = useDispatch()
     const token = sessionStorage.getItem("auth-token")
     
-    const [personDetail, setPersonDetail] = useState({
-        first_name:'',
-        last_name:'',
-        email:''
-    })
-    const [getData, setGetData] = useState(false)
+    
+    const [firstName, setFirstName]=useState('')
+    const [lastName, setLastName]=useState('')
+    const [email, setEmail]=useState('')
     
     useEffect(()=>{
 
@@ -38,27 +46,29 @@ const useStyles = makeStyles({
         // setPersonDetail(props.viewData.first_name)
         // console.log(personDetail)
         // console.log(personDetail)
-        console.log(dispatch(viewUser(id)))
+        dispatch(viewUser(id))
         
-            setPersonDetail({first_name: props.viewData.first_name})
-            setPersonDetail({last_name: props.viewData.last_name})
-            setPersonDetail({email: props.viewData.email})
             
-        
+            // setFirstName(props.viewData.first_name)
        
         
     },[])
    
-        
+    // const onHandleBlue =e =>{
+    //     setFirstName(props.viewData.first_name)
+    //     console.log(firstName)
+    // }
     
-    const onChangeHandler = e => {
-        setPersonDetail({[e.target.name]: e.target.value });
-    };
     const onSubmit = (e)=>{
+        const personDetail ={
+            firstName  : firstName||props.viewData.first_name,
+            lastName : lastName||props.viewData.last_name,
+            email: email||props.viewData.email
+        }
+        console.log(personDetail)
         e.preventDefault()
         dispatch(editUser(id,personDetail))
-        
-            history.push('/data')
+        history.push('/data')
         
     }
     
@@ -70,9 +80,12 @@ const useStyles = makeStyles({
                 token?<div>
             
             <AppBar position="static" className={classes.header} >
-                <Typography variant="h6" color="inherit" textAlign='center' >
-                   {!props.username ? <div>Header</div> :props.username}
-                </Typography>
+            <Button color="primary" >
+                   <Link to="/data" className={classes.link}>HOME</Link>
+                </Button>
+                <Button color="primary" >
+                   <Link to="/logout" className={classes.link}>LOGOUT</Link>
+                </Button>
 
             </AppBar>
         {props.viewData?<div  className="Main-container">
@@ -80,35 +93,36 @@ const useStyles = makeStyles({
                             
                             Details Form</div>
                 
-                 <form onSubmit={e => onSubmit(e)}>
-                    <div >
+                 <form  onSubmit={e => onSubmit(e)}>
+                    <div className={classes.inputField}>
                     <label className="Label" >First Name </label>
                         <input className="Field"
                             type="text"
                             placeholder="First Name"
                             name="name"
-                            value={props.viewData.first_name}
-                            onChange={e => onChangeHandler(e)}
+                            value={firstName|| props.viewData.first_name}
+                            onChange={e => setFirstName(e.target.value)}
+                            
                         />
                     </div>
-                    <div >
+                    <div  className={classes.inputField}>
                     <label className="Label" >Last Name </label>
                         <input className="Field"
                             type="text"
                             placeholder="Username"
                             name="Last Name"
-                            value={props.viewData.last_name}
-                            onChange={e => onChangeHandler(e)}
+                            value={lastName|| props.viewData.last_name}
+                            onChange={e => setLastName(e.target.value)}
                         />
                     </div>
-                    <div >
+                    <div  className={classes.inputField}>
                     <label className="Label" > Email</label>
                         <input className="Field"
                             type="email"
                             placeholder="E-mail"
                             name="email"
-                            value={props.viewData.email}
-                            onChange={e => onChangeHandler(e)}
+                            value={email|| props.viewData.email}
+                            onChange={e => setEmail(e.target.value)}
                         />
                     </div>
 
